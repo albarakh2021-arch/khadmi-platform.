@@ -1,0 +1,22 @@
+"use client";
+import { signIn } from "next-auth/react";
+import { useState } from "react";
+
+export default function SignInPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    await signIn("credentials", { email, password, callbackUrl: "/" });
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="max-w-md mx-auto p-4">
+      <h1 className="text-2xl mb-4">تسجيل الدخول</h1>
+      <input value={email} onChange={e => setEmail(e.target.value)} placeholder="البريد الإلكتروني" type="email" required className="input"/>
+      <input value={password} onChange={e => setPassword(e.target.value)} placeholder="كلمة المرور" type="password" required className="input"/>
+      <button type="submit" className="btn-primary">دخول</button>
+    </form>
+  );
+}
