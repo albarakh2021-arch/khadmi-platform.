@@ -1,0 +1,36 @@
+"use client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { signIn, useSession } from "next-auth/react";
+
+export default function AddServicePage() {
+  const { data: session } = useSession();
+  const router = useRouter();
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [price, setPrice] = useState(0);
+
+  if (!session) {
+    signIn(); return <p>جاري التحويل لتسجيل الدخول…</p>;
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    await fetch("/api/services", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title, description, price })
+    });
+    router.push("/services");
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="max-w-lg mx-auto p-4">
+      <h1 className="text-2xl mb-4">أضف خدمتك</h1>
+      <input value={title} onChange={e => setTitle(e.target.value)} placeholder="عنوان الخدمة" required className="input"/>
+      <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="وصف الخدمة" required className="input h-24"/>
+      <input value={price} onChange={e => setPrice(+e.target.value)} placeholder="السعر (﷼)" type="number" required className="input"/>
+      <button type="submit" className="btn-primary">نشر الخدمة</button>
+    </form>
+  );
+}
